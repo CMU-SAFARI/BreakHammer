@@ -171,9 +171,9 @@ def get_multicore_run_commands():
 single_cmds = get_singlecore_run_commands()
 multi_cmds = get_multicore_run_commands()
 
-with open("run_personal.sh", "w") as f:
+with open("run.sh", "w") as f:
     f.write(f"{CMD_HEADER}\n")
     for cmd in single_cmds + multi_cmds:
         f.write(f"{cmd}\n")
 
-os.system("chmod uog+x run_personal.sh")
+os.system("chmod uog+x run.sh")

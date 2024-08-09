@@ -4,7 +4,7 @@ from .calc_rh_parameters import *
 
 MEM_HIST_PREC = 5
 NUM_EXPECTED_INSTS = 100_000_000
-NUM_MAX_CYCLES = 100_000_000
+NUM_MAX_CYCLES = 1_000_000_000
 
 CONTROLLER = "BHDRAMController"
 SCHEDULER = "BHScheduler"
@@ -18,9 +18,8 @@ dynamic_thresh_list = []
 thresh_type_list = []
 cache_only_list = []
 
-# mitigation_list = ["AQUA", "Graphene", "Hydra", "PARA", "REGA", "RFM", "TWiCe-Ideal"]
-mitigation_list = ["Graphene", "Hydra"]
-tRH_list = [4096, 1024, 256]
+mitigation_list = ["AQUA", "Graphene", "Hydra", "PARA", "REGA", "RFM", "TWiCe-Ideal"]
+tRH_list = [4096, 2048, 1024, 512, 256, 128, 64]
 flat_thresh_list = [32]
 dynamic_thresh_list = [0.65]
 thresh_type_list = ["MEAN"]
@@ -51,6 +50,8 @@ def get_multicore_params_list():
     for mitigation in mitigation_list:
         for tRH in tRH_list:
             params.append((mitigation, "NONE", False, tRH, 0, 0.0))
+    for tRH in tRH_list:
+        params.append(("BlockHammer", "NONE", False, tRH, 0, 0.0))
     return params
 
 def get_singlecore_params_list():

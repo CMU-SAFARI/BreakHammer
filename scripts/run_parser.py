@@ -1,8 +1,6 @@
 import os
 import sys
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 from . import result_parser as parser
 from .run_config import *
@@ -11,7 +9,7 @@ PRINT_ERROR = False
 PRINT_MISSING = False
 PRINT_RUNNING = False
 
-def get_parameter_results(result_dir, csv_dir, trace_name_list, num_cores, name_prefix, ignore_partial = True):
+def get_results(result_dir, csv_dir, trace_name_list, num_cores, name_prefix, ignore_partial = True):
     running = 0
     missing = 0
     error = 0
@@ -66,7 +64,7 @@ def get_parameter_results(result_dir, csv_dir, trace_name_list, num_cores, name_
             df_index += 1
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
-    print(f"D: {done} R: {running} E: {error} M: {missing}")
+    print(f"  Done   : {done}\n  Running: {running}\n  Error  : {error}\n  Missing: {missing}")
     success = (running + error + missing) == 0
     mem_df = mem_df[:mem_df_index]
     df = df[:df_index]
@@ -75,27 +73,20 @@ def get_parameter_results(result_dir, csv_dir, trace_name_list, num_cores, name_
         mem_df.to_csv(f"{csv_dir}/{name_prefix}_mem.csv", index=False)
     return success
 
-def parse_parameter_runs(result_dir, csv_dir, trace_path, num_cores, ignore_partial=True):
+def parse_runs(result_dir, csv_dir, trace_path, num_cores, ignore_partial=True):
     singlecore_trace_list, multicore_trace_list = get_trace_lists(trace_path)
     print("Parsing Multicore Runs")
-    done_multi = get_parameter_results(result_dir, csv_dir, multicore_trace_list, num_cores, "multicore", ignore_partial)
+    done_multi = get_results(result_dir, csv_dir, multicore_trace_list, num_cores, "multicore", ignore_partial)
     print("Parsing Singlecore Runs")
-    done_single = get_parameter_results(result_dir, csv_dir, singlecore_trace_list, 1, "singlecore", ignore_partial)
+    done_single = get_results(result_dir, csv_dir, singlecore_trace_list, 1, "singlecore", ignore_partial)
     return (not ignore_partial) or (done_multi and done_single)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        en_str = sys.argv[1].lower()
-        if "e" in en_str:
-            PRINT_ERROR = True
-        if "m" in en_str:
-            PRINT_MISSING = True
-        if "r" in en_str:
-            PRINT_RUNNING = True
-    work_dir = "/mnt/panzer/ocanpolat/breakhammer"
-    trace_path = f"{work_dir}/mixes/microattack.mix"
-    result_dir = f"{work_dir}/ae_results/microattack"
+    work_dir = sys.argv[1]
+    trace_path = sys.argv[2]
+    result_dir = sys.argv[3]
+    num_benign_cores = int(sys.argv[4])
     csv_dir = f"{result_dir}/_csvs"
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
-    parse_parameter_runs(result_dir, csv_dir, trace_path, 4)
+    parse_runs(result_dir, csv_dir, trace_path, num_benign_cores)
