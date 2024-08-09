@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+build/
+.vscode
+ext/
+ramulator2
+*.so
+traces/
+cputraces/
+ae_results/
+run_scripts/
+run_personal.sh
+run_slurm.sh
