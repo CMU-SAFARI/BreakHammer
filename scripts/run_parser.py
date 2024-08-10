@@ -115,7 +115,7 @@ def check_runs(work_dir, result_dir, csv_dir, trace_name_list, num_cores, name_p
     if len(missing_runs) > 0:
         dump_runs(work_dir, result_dir, missing_runs, f"{mix_name}_{name_prefix}_missing")
         print(f"[INFO] You can rerun missing simulations using scripts at: {work_dir}/rerun_scripts" +\
-                "(if you are using slur make sure these runs are not waiting for resources)")
+                " (if you are using slurm make sure these runs are not waiting for resources)")
     mem_df = mem_df[:mem_df_index]
     df = df[:df_index]
     df.to_csv(f"{csv_dir}/{name_prefix}.csv", index=False)
