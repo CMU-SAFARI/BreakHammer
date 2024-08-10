@@ -26,7 +26,7 @@ WORK_DIR = args.working_directory
 TRACE_COMBINATION_DIR = args.trace_combination
 TRACE_DIR = args.trace_directory
 RESULT_DIR = args.result_directory
-PLOT_DIR = f"{WORK_DIR}/plots"
+PLOT_DIR = f"{RESULT_DIR}/_plots"
 
 if not os.path.exists(PLOT_DIR):
     os.makedirs(PLOT_DIR)
@@ -73,7 +73,6 @@ def general_df_setup(csv_dir, trace_dir, trace_comb_file, num_cores):
     for i in range(num_cores):
         mpkidf[f"core{i}"] = mpkidf["benchmark"]
 
-    df = df[df.mitigation != "BlockHammer"]
     df = df.merge(wldf, on='trace', how='left')
     df["label"] = "Unknown"
     df["MPKI"] = 0

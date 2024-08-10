@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
-echo "[INFO] Generating Figures"
+echo "[INFO] Generating figures"
 python3 plotting_scripts/plot_all.py \
     --working_directory "$PWD" \
     --trace_combination "$PWD/mixes" \

@@ -6,6 +6,7 @@ from figure10 import plot_figure10
 from figure11 import plot_figure11
 from figure12 import plot_figure12
 from figure13 import plot_figure13
+from figure14 import plot_figure14
 
 from plot_setup import *
 
@@ -39,6 +40,9 @@ def plot_all_figures():
     print(f"[INFO] Generating Figure13 (This might take a while, e.g., >3 mins)")
     plot_figure13(f"{RESULT_DIR}/microbenign/_csvs")
     print(f"[INFO] Generated Figure13 to {PLOT_DIR}/figure13.pdf")
+    print(f"[INFO] Generating Figure14")
+    plot_figure14(f"{RESULT_DIR}/microbenign/_csvs")
+    print(f"[INFO] Generated Figure14 to {PLOT_DIR}/figure14.pdf")
 
 if __name__ == "__main__":
     plot_all_figures()

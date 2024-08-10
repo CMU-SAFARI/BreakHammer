@@ -72,5 +72,6 @@ if __name__ == "__main__":
     csv_dir = f"{result_dir}/_csvs"
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
-    parse_runs(result_dir, csv_dir, trace_path, num_benign_cores)
+    parse_runs(work_dir, result_dir, csv_dir, trace_path, num_benign_cores, True)
+    print("[INFO] Extracting statistics from raw simulation data")
     process_results(csv_dir, trace_path, num_benign_cores)
