@@ -9,5 +9,6 @@ traces/
 cputraces/
 ae_results/
 run_scripts/
+rerun_scripts/
 run_personal.sh
 run_slurm.sh

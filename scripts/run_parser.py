@@ -5,11 +5,41 @@ import pandas as pd
 from . import result_parser as parser
 from .run_config import *
 
+SBATCH_CMD = "sbatch --exclude=kratos10,kratos17,kratos18,kratos19 --cpus-per-task=1 --nodes=1 --ntasks=1"
+
 PRINT_ERROR = False
 PRINT_MISSING = False
 PRINT_RUNNING = False
 
-def get_results(result_dir, csv_dir, trace_name_list, num_cores, name_prefix, ignore_partial = True):
+def dump_runs(work_dir, result_dir, missing_runs, filename):
+    if not os.path.exists(f"{work_dir}/rerun_scripts"):
+        os.makedirs(f"{work_dir}/rerun_scripts")
+    slurm_filename = f"{work_dir}/rerun_scripts/{filename}_slurm.sh"
+    with open(slurm_filename, "w") as f:
+        f.write("#!/bin/bash\n")
+        for mitigation, stat_str, trace in missing_runs:
+            sbatch_filename = f"{work_dir}/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
+            result_filename = f"{result_dir}/{mitigation}/stats/{stat_str}_{trace}.txt"
+            error_filename = f"{result_dir}/{mitigation}/errors/{stat_str}_{trace}.txt"
+
+            job_name = f"ramulator2"
+            sb_cmd = f"{SBATCH_CMD} --chdir={work_dir} --output={result_filename}"
+            sb_cmd += f" --error={error_filename} --partition=cpu_part --job-name='{job_name}'"
+            sb_cmd += f" {sbatch_filename}"
+            f.write(f"{sb_cmd}\n")
+
+    personal_filename = f"{work_dir}/rerun_scripts/{filename}_personal.sh"
+    with open(personal_filename, "w") as f:
+        f.write("#!/bin/bash\n")
+        for mitigation, stat_str, trace in missing_runs:
+            config_filename = f"{result_dir}/{mitigation}/configs/{stat_str}_{trace}.yaml"
+            result_filename = f"{result_dir}/{mitigation}/stats/{stat_str}_{trace}.txt"
+            f.write(f"{work_dir}/ramulator2 -f {config_filename} > {result_filename} 2>&1\n")
+
+    os.system(f"chmod uog+x {slurm_filename}")
+    os.system(f"chmod uog+x {personal_filename}")
+
+def get_results(work_dir, result_dir, csv_dir, trace_name_list, num_cores, name_prefix):
     running = 0
     missing = 0
     error = 0
@@ -25,32 +55,28 @@ def get_results(result_dir, csv_dir, trace_name_list, num_cores, name_prefix, ig
     mem_expected_size = 101 * 4 * num_configs
     mem_df_index = 0
     mem_df = pd.DataFrame(index = range(mem_expected_size), columns = PARAM_STR_LIST + ["trace", "core_id", "pN_key", "pN_val"])
-    rerun_df = pd.DataFrame(columns = PARAM_STR_LIST + ["trace"])
+    error_runs = []
+    missing_runs = []
     for trace_name in trace_name_list:
         params_list = get_singlecore_params_list() if "single" in name_prefix else get_multicore_params_list()
         for item in params_list:
             item = list(item)
-            result_file = f"{result_dir}/{item[0]}/stats/{make_stat_str(item[1:])}_{trace_name}.txt"
-            error_file = f"{result_dir}/{item[0]}/errors/{make_stat_str(item[1:])}_{trace_name}.txt"
-            cmd_count_file = f"{result_dir}/{item[0]}/cmd_count/{make_stat_str(item[1:])}_{trace_name}.cmd.count"
+            stat_str = make_stat_str(item[1:])
+            result_file = f"{result_dir}/{item[0]}/stats/{stat_str}_{trace_name}.txt"
+            error_file = f"{result_dir}/{item[0]}/errors/{stat_str}_{trace_name}.txt"
+            cmd_count_file = f"{result_dir}/{item[0]}/cmd_count/{stat_str}_{trace_name}.cmd.count"
             core_stat, global_stat = parser.parse(result_file, error_file)
             if global_stat["prog_stat"] == "ERROR":
-                if PRINT_ERROR:
-                    print(result_file)
-                rerun_df.loc[len(rerun_df)] = item + [trace_name]
                 error += 1
+                error_runs.append((item[0], stat_str, trace_name))
                 continue 
             if global_stat["prog_stat"] == "MISSING":
-                if PRINT_MISSING:
-                    print(result_file)
-                rerun_df.loc[len(rerun_df)] = item + [trace_name]
                 missing += 1
+                missing_runs.append((item[0], stat_str, trace_name))
                 continue 
             if global_stat["prog_stat"] == "RUNNING":
-                if PRINT_RUNNING:
-                    print(result_file)
                 running += 1
-                continue # Skip this guy
+                continue
             done += 1
             num_commands = parser.parse_command_count(cmd_count_file)
             item += [trace_name]
@@ -64,22 +90,28 @@ def get_results(result_dir, csv_dir, trace_name_list, num_cores, name_prefix, ig
             df_index += 1
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
+    mix_name = trace_path[trace_path.rindex("/"):trace_path.rindex(".mix")]
     print(f"  Done   : {done}\n  Running: {running}\n  Error  : {error}\n  Missing: {missing}")
+    if len(error_runs) > 0:
+        dump_runs(work_dir, result_dir, error_runs, f"{mix_name}_{name_prefix}_error")
+        print(f"[INFO] You can rerun simulations with errors using scripts at: {work_dir}/rerun_scripts")
+    if len(missing_runs) > 0:
+        dump_runs(work_dir, result_dir, missing_runs, f"{mix_name}_{name_prefix}_missing")
+        print(f"[INFO] You can rerun missing simulations using scripts at: {work_dir}/rerun_scripts" +\
+                "(if you are using slurm, make sure these runs are not waiting for resources)")
     success = (running + error + missing) == 0
     mem_df = mem_df[:mem_df_index]
     df = df[:df_index]
-    if success or not ignore_partial:
-        df.to_csv(f"{csv_dir}/{name_prefix}.csv", index=False)
-        mem_df.to_csv(f"{csv_dir}/{name_prefix}_mem.csv", index=False)
+    df.to_csv(f"{csv_dir}/{name_prefix}.csv", index=False)
+    mem_df.to_csv(f"{csv_dir}/{name_prefix}_mem.csv", index=False)
     return success
 
-def parse_runs(result_dir, csv_dir, trace_path, num_cores, ignore_partial=True):
+def parse_runs(work_dir, result_dir, csv_dir, trace_path, num_cores):
     singlecore_trace_list, multicore_trace_list = get_trace_lists(trace_path)
-    print("Parsing Multicore Runs")
-    done_multi = get_results(result_dir, csv_dir, multicore_trace_list, num_cores, "multicore", ignore_partial)
-    print("Parsing Singlecore Runs")
-    done_single = get_results(result_dir, csv_dir, singlecore_trace_list, 1, "singlecore", ignore_partial)
-    return (not ignore_partial) or (done_multi and done_single)
+    print("[INFO] Parsing Multicore Runs")
+    get_results(work_dir, result_dir, csv_dir, multicore_trace_list, num_cores, "multicore")
+    print("[INFO] Parsing Singlecore Runs")
+    get_results(work_dir, result_dir, csv_dir, singlecore_trace_list, 1, "singlecore")
 
 if __name__ == "__main__":
     work_dir = sys.argv[1]
@@ -89,4 +121,4 @@ if __name__ == "__main__":
     csv_dir = f"{result_dir}/_csvs"
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
-    parse_runs(result_dir, csv_dir, trace_path, num_benign_cores)
+    parse_runs(work_dir, result_dir, csv_dir, trace_path, num_benign_cores)

@@ -1,10 +1,10 @@
 import itertools
-import subprocess
 from .calc_rh_parameters import *
+
 
 MEM_HIST_PREC = 5
 NUM_EXPECTED_INSTS = 100_000_000
-NUM_MAX_CYCLES = 1_000_000_000
+NUM_MAX_CYCLES = 100_000_000
 
 CONTROLLER = "BHDRAMController"
 SCHEDULER = "BHScheduler"
