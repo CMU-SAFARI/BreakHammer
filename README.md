@@ -12,7 +12,7 @@
 +-- src/                            # Ramulator2 source code
 |   +-- dram_controller/
 |   |   +--impl/plugin
-|   |   |  +-- throttler            # Ramulator2 plugin that implements main BreakHammer functionality
+|   |   |  +-- throttler.cpp        # Ramulator2 plugin that implements main BreakHammer functionality
 |   ...
 ...
 +-- README.md                       # This file
