@@ -1,20 +1,33 @@
+# Ignore Python and IDE caches
 __pycache__/
 *.pyc
-build/
 .vscode
+
+# Ignore Ramulator2 build files
+build/
 ext/
 ramulator2
 *.so
-traces/
+
+# Only keep cpu traces locally
 cputraces/
+
+# Ignore intermediate run scripts
 run_scripts/
 rerun_scripts/
 run_personal.sh
 run_slurm.sh
 run.sh
 
+# Ignore everything in ae_results/
 ae_results/*
-!ae_results/**/_csvs/
-!ae_results/**/_plots/
-!ae_results/**/_csvs/**
-!ae_results/**/_plots/**
+# Do not ignore directories within ae_results/
+!ae_results/*/
+# Ignore everything in subdirectories of ae_results/
+ae_results/*/*
+# Do not ignore _csvs and _plots directories
+!ae_results/*/_csvs/
+!ae_results/*/_plots/
+# Ensure files inside _csvs and _plots are included
+!ae_results/*/_csvs/**
+!ae_results/*/_plots/**
