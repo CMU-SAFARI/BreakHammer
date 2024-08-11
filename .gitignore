@@ -7,8 +7,14 @@ ramulator2
 *.so
 traces/
 cputraces/
-ae_results/
 run_scripts/
 rerun_scripts/
 run_personal.sh
 run_slurm.sh
+run.sh
+
+ae_results/*
+!ae_results/**/_csvs/
+!ae_results/**/_plots/
+!ae_results/**/_csvs/**
+!ae_results/**/_plots/**
