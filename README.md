@@ -37,7 +37,7 @@
 
 1. Run Ramulator2 simulations `./run_with_slurm.sh` (If you do not have slurm use `./run_with_personalcomputer.sh` instead)
 2. Wait for the simulations to finish. You can use `./check_run_status.sh` to track run status (this script also creates intermediate scripts that can restart failed runs)
-3. Parse simulation results and extract statistics with `./parse_results.sh`
+3. Parse simulation results and collects statistics with `./parse_results.sh`
 4. Generate figures with `./plot_all.sh`
 
 ## Contacts:
