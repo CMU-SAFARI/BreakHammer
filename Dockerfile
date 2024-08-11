@@ -14,6 +14,6 @@ COPY . /app
 
 WORKDIR /app
 
-RUN pip3 install matplotlib pandas seaborn pyyaml
+RUN pip3 install matplotlib pandas seaborn pyyaml wget
 
 ENTRYPOINT ["/bin/bash"]

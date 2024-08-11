@@ -11,6 +11,7 @@ ramulator2
 
 # Only keep cpu traces locally
 cputraces/
+cputraces.tar.gz
 
 # Ignore intermediate run scripts
 run_scripts/
