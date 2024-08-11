@@ -35,6 +35,7 @@ def dump_runs(work_dir, result_dir, missing_runs, filename):
         for mitigation, stat_str, trace in missing_runs:
             config_filename = f"{result_dir}/{mitigation}/configs/{stat_str}_{trace}.yaml"
             result_filename = f"{result_dir}/{mitigation}/stats/{stat_str}_{trace}.txt"
+            f.write(f"echo \"[INFO] Running configuration '{config_filename}' with output at '{result_filename}'\"\n")
             f.write(f"{work_dir}/ramulator2 -f {config_filename} > {result_filename} 2>&1\n")
 
     os.system(f"chmod uog+x {slurm_filename}")
@@ -80,32 +81,33 @@ def check_runs(work_dir, result_dir, csv_dir, trace_name_list, num_cores, name_p
                 running += 1
                 continue
             done += 1
-            if parse_results:
-                for i in range(num_cores):
-                    mem_hist = mem_parser.get_mem_hist(f"{mem_latency_file}.core{i}")
-                    if len(mem_hist) == 0:
-                        for pN in range(101):
-                            mem_df.iloc[mem_df_index] = item + [trace_name, i, pN, 0]
-                            mem_df_index += 1
-                        continue
-                    _, total_reqs = mem_hist[-1]
-                    n_percentile = 0
-                    pN_step = total_reqs / 100
-                    for bucket, running_sum in mem_hist:
-                        while running_sum >= (pN_step * n_percentile):
-                            mem_df.iloc[mem_df_index] = item + [trace_name, i, n_percentile, bucket + MEM_HIST_PREC - 1]
-                            n_percentile += 1
-                            mem_df_index += 1
-                num_commands = parser.parse_command_count(cmd_count_file)
-                item += [trace_name]
-                item += [parser.metric_ipc(core_stat[core_id]) for core_id in range(num_cores)]
-                item += [num_commands["VRR"], global_stat["RFM"], global_stat["RRS_reswap"],\
-                            global_stat["RRS_unswap"], global_stat["RRS_swap"], global_stat["AQUA_migrate"],
-                            global_stat["AQUA_r_migrate"]]
-                item += [global_stat["total_energy"]]
-                item += [core_stat[core_id]["ins"] for core_id in range(num_cores)]
-                df.iloc[df_index] =  item 
-                df_index += 1
+            if not parse_results:
+                continue
+            for i in range(num_cores):
+                mem_hist = mem_parser.get_mem_hist(f"{mem_latency_file}.core{i}")
+                if len(mem_hist) == 0:
+                    for pN in range(101):
+                        mem_df.iloc[mem_df_index] = item + [trace_name, i, pN, 0]
+                        mem_df_index += 1
+                    continue
+                _, total_reqs = mem_hist[-1]
+                n_percentile = 0
+                pN_step = total_reqs / 100
+                for bucket, running_sum in mem_hist:
+                    while running_sum >= (pN_step * n_percentile):
+                        mem_df.iloc[mem_df_index] = item + [trace_name, i, n_percentile, bucket + MEM_HIST_PREC - 1]
+                        n_percentile += 1
+                        mem_df_index += 1
+            num_commands = parser.parse_command_count(cmd_count_file)
+            item += [trace_name]
+            item += [parser.metric_ipc(core_stat[core_id]) for core_id in range(num_cores)]
+            item += [num_commands["VRR"], global_stat["RFM"], global_stat["RRS_reswap"],\
+                        global_stat["RRS_unswap"], global_stat["RRS_swap"], global_stat["AQUA_migrate"],
+                        global_stat["AQUA_r_migrate"]]
+            item += [global_stat["total_energy"]]
+            item += [core_stat[core_id]["ins"] for core_id in range(num_cores)]
+            df.iloc[df_index] =  item 
+            df_index += 1
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
     print(f" >Done   : {done}\n >Running: {running}\n >Error  : {error}\n >Missing: {missing}")
@@ -116,6 +118,8 @@ def check_runs(work_dir, result_dir, csv_dir, trace_name_list, num_cores, name_p
         dump_runs(work_dir, result_dir, missing_runs, f"{mix_name}_{name_prefix}_missing")
         print(f"[INFO] You can rerun missing simulations using scripts at: {work_dir}/rerun_scripts" +\
                 " (if you are using slurm make sure these runs are not waiting for resources)")
+    if not parse_results:
+        return
     mem_df = mem_df[:mem_df_index]
     df = df[:df_index]
     df.to_csv(f"{csv_dir}/{name_prefix}.csv", index=False)

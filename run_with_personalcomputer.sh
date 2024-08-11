@@ -26,4 +26,3 @@ echo "[INFO] Starting Ramulator2 benign simulations"
 sh "$PWD/run.sh" 
 
 echo "[INFO] You can track run status with the <check_run_status.sh> script"
-rm "$PWD/run.sh" 

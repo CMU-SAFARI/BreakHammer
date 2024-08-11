@@ -73,10 +73,11 @@ def parse(result_filename, error_filename):
     if not os.path.exists(result_filename):
         global_data["prog_stat"] = "MISSING"
         return per_core_data, global_data
-    with open(error_filename, "r", encoding="utf-8") as f:
-        if len(f.readlines()) > 1:
-            global_data["prog_stat"] = "ERROR"
-            return per_core_data, global_data
+    if os.path.exists(error_filename):
+        with open(error_filename, "r", encoding="utf-8") as f:
+            if len(f.readlines()) > 1:
+                global_data["prog_stat"] = "ERROR"
+                return per_core_data, global_data
     with open(result_filename, "r", encoding="utf-8") as f:
         for line in f:
             if "CommandCounter" in line:
