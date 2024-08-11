@@ -4,11 +4,11 @@
 .
 +-- ae_results/                     # Simulation results and plots (will be overwritten when new experiments are executed)
 +-- cputraces/                      # CPU traces for 56 single-core workloads
-+-- mixes/                          # 51 workloads of varying memory intensities with an attacker present
-|   +-- microattack.mix/            # 51 bening-only workloads
-|   +-- microbenign.mix/            # Configurations for four state-of-the-art mechanisms     
-+-- plotting_scripts/               # Scripts to use extraced simulation statistics and create the plots in our paper
-+-- scripts/                        # Scripts to post process raw data and extract statistics for plotting
++-- mixes/                          # Workload mixes
+|   +-- microattack.mix/            # 51 workloads of varying memory intensities with an attacker present 
+|   +-- microbenign.mix/            # 51 bening-only workloads
++-- plotting_scripts/               # Scripts to use extracted simulation statistics and create the plots in our paper
++-- scripts/                        # Scripts to post-process raw data and extract statistics for plotting
 +-- src/                            # Ramulator2 source code
 |   +-- dram_controller/
 |   |   +--impl/plugin
