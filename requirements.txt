@@ -1,0 +1,6 @@
+matplotlib
+pandas
+seaborn
+pyyaml
+wget
+scipy
