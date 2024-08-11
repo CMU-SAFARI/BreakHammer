@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 PLOT_ID=$1
 

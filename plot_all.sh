@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 echo "[INFO] Generating figures"
 python3 plotting_scripts/plot_all.py \

@@ -165,6 +165,7 @@ def get_multicore_run_commands():
             config_file.close()
 
             cmd = f"{BASE_CMD} -f {config_filename} > {result_filename} 2>&1"           
+            run_commands.append(f"echo [INFO] \"Running configuration '{config_filename}' with output at '{result_filename}'\"")
             run_commands.append(cmd)
     return run_commands
 
