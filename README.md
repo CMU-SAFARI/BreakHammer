@@ -29,7 +29,7 @@
  
 ### Installation steps:
 
-1. Clone the repository `git clone -b micro-ae git@github.com:kirbyydoge/breakhammer.git`
+1. Clone the repository `git clone git@github.com:kirbyydoge/breakhammer.git`
 2. Install python3 libraries with `pip3 install -r requirements.txt`
 3. Build Ramulator2 and download traces with `./run_simple_test.sh`
 
