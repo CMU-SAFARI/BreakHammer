@@ -41,7 +41,7 @@ def plot_all_figures():
     plot_figure13(f"{RESULT_DIR}/microbenign/_csvs")
     print(f"[INFO] Generated Figure13 to {PLOT_DIR}/figure13.pdf")
     print(f"[INFO] Generating Figure14")
-    plot_figure14(f"{RESULT_DIR}/microbenign/_csvs")
+    plot_figure14(f"{RESULT_DIR}/microattack/_csvs")
     print(f"[INFO] Generated Figure14 to {PLOT_DIR}/figure14.pdf")
 
 if __name__ == "__main__":

@@ -26,9 +26,8 @@ ae_results/*
 !ae_results/*/
 # Ignore everything in subdirectories of ae_results/
 ae_results/*/*
+!ae_results/_plots/*
 # Do not ignore _csvs and _plots directories
 !ae_results/*/_csvs/
-!ae_results/*/_plots/
 # Ensure files inside _csvs and _plots are included
 !ae_results/*/_csvs/**
-!ae_results/*/_plots/**
