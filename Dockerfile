@@ -14,7 +14,7 @@ COPY . /app
 
 WORKDIR /app
 
-RUN build.sh
+RUN sh build.sh
 
 RUN pip3 install matplotlib pandas seaborn
 
