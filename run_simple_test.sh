@@ -1,5 +1,8 @@
 #! /bin/bash
 
+echo "[INFO] Installing Python dependencies"
+pip3 install -r requirements.txt
+
 echo "[INFO] Building Ramulator2"
 sh "./build.sh"
 

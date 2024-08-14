@@ -1,8 +1,5 @@
 #! /bin/bash
 
-echo "[INFO] Building Ramulator2"
-sh "./build.sh"
-
 echo "[INFO] Generating Ramulator2 configurations and run scripts for attacker workloads (This might take a while, e.g., >3 mins)"
 python3 setup_personalcomputer.py \
     --working_directory "$PWD" \

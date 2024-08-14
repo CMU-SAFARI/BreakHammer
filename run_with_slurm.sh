@@ -1,8 +1,5 @@
 #! /bin/bash
 
-echo "[INFO] Building Ramulator2"
-sh "./build.sh"
-
 echo "[INFO] Generating Ramulator2 configurations and run scripts for attacker workloads"
 python3 setup_slurm.py \
     --working_directory "$PWD" \

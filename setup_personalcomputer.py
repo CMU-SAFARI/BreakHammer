@@ -25,7 +25,7 @@ TRACE_COMBINATION_FILE = args.trace_combination
 TRACE_DIR = args.trace_directory
 RESULT_DIR = args.result_directory
 
-CMD_HEADER = "#!/bin/bash"
+CMD_HEADER = "#! /bin/bash"
 BASE_CMD = f"{WORK_DIR}/ramulator2"
 
 BASE_CONFIG = None

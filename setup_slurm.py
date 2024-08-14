@@ -27,7 +27,7 @@ RESULT_DIR = args.result_directory
 
 SBATCH_CMD = "sbatch --cpus-per-task=1 --nodes=1 --ntasks=1"
 
-CMD_HEADER = "#!/bin/bash"
+CMD_HEADER = "#! /bin/bash"
 CMD = f"{WORK_DIR}/ramulator2"
 
 BASE_CONFIG = None

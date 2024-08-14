@@ -17,7 +17,7 @@ def dump_runs(work_dir, result_dir, missing_runs, filename):
         os.makedirs(f"{work_dir}/rerun_scripts")
     slurm_filename = f"{work_dir}/rerun_scripts/{filename}_slurm.sh"
     with open(slurm_filename, "w") as f:
-        f.write("#!/bin/bash\n")
+        f.write("#! /bin/bash\n")
         for mitigation, stat_str, trace in missing_runs:
             sbatch_filename = f"{work_dir}/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
             result_filename = f"{result_dir}/{mitigation}/stats/{stat_str}_{trace}.txt"
@@ -31,7 +31,7 @@ def dump_runs(work_dir, result_dir, missing_runs, filename):
 
     personal_filename = f"{work_dir}/rerun_scripts/{filename}_personal.sh"
     with open(personal_filename, "w") as f:
-        f.write("#!/bin/bash\n")
+        f.write("#! /bin/bash\n")
         for mitigation, stat_str, trace in missing_runs:
             config_filename = f"{result_dir}/{mitigation}/configs/{stat_str}_{trace}.yaml"
             result_filename = f"{result_dir}/{mitigation}/stats/{stat_str}_{trace}.txt"

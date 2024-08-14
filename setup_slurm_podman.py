@@ -8,7 +8,7 @@ from scripts.run_config import *
 
 argparser = argparse.ArgumentParser(
     prog="RunPersonal",
-    description="Run ramulator2 (with Docker) simulations using Slurm "
+    description="Run ramulator2 (with Podman) simulations using Slurm "
 )
 
 argparser.add_argument("-wd", "--working_directory")
@@ -25,10 +25,12 @@ TRACE_COMBINATION_FILE = args.trace_combination
 TRACE_DIR = args.trace_directory
 RESULT_DIR = args.result_directory
 
+HOST_RESULT_DIR = RESULT_DIR.replace("/app", WORK_DIR)
+
 SBATCH_CMD = "sbatch --cpus-per-task=1 --nodes=1 --ntasks=1"
 
-CMD_HEADER = "#!/bin/bash"
-CMD = f"{WORK_DIR}/ramulator2"
+CMD_HEADER = "#! /bin/bash"
+CMD = f"/app/ramulator2"
 
 BASE_CONFIG = None
 
@@ -77,8 +79,8 @@ def get_singlecore_run_commands():
         mitigation, throttle_type, _, tRH, flat_thresh, dynamic_thresh = config
         stat_str = make_stat_str(config[1:])
         for trace in singlecore_traces:
-            result_filename = f"{RESULT_DIR}/{mitigation}/stats/{stat_str}_{trace}.txt"
-            error_filename = f"{RESULT_DIR}/{mitigation}/errors/{stat_str}_{trace}.txt"
+            result_filename = f"{HOST_RESULT_DIR}/{mitigation}/stats/{stat_str}_{trace}.txt"
+            error_filename = f"{HOST_RESULT_DIR}/{mitigation}/errors/{stat_str}_{trace}.txt"
             config_filename = f"{RESULT_DIR}/{mitigation}/configs/{stat_str}_{trace}.yaml"
             cmd_count_filename = f"{RESULT_DIR}/{mitigation}/cmd_count/{stat_str}_{trace}.cmd.count"
             latency_dump_filename = f"{RESULT_DIR}/{mitigation}/mem_latency/{stat_str}_{trace}.memlat.dump"
@@ -110,8 +112,9 @@ def get_singlecore_run_commands():
             config_file.close()
 
             sbatch_filename = f"{WORK_DIR}/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
-            sbatch_file = open(sbatch_filename, "w")
-            sbatch_file.write(f"{CMD_HEADER}\n{CMD} -f {config_filename}\n")
+            podman_sbatch_filename = f"/app/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
+            sbatch_file = open(podman_sbatch_filename, "w")
+            sbatch_file.write(f"{CMD_HEADER}\npodman run --rm -v $PWD:/app breakhammer_artifact ls")
             sbatch_file.close()
 
             job_name = f"ramulator2"
@@ -130,8 +133,8 @@ def get_multicore_run_commands():
         mitigation, throttle_type, _, tRH, flat_thresh, dynamic_thresh = config
         stat_str = make_stat_str(config[1:])
         for trace in multicore_traces:
-            result_filename = f"{RESULT_DIR}/{mitigation}/stats/{stat_str}_{trace}.txt"
-            error_filename = f"{RESULT_DIR}/{mitigation}/errors/{stat_str}_{trace}.txt"
+            result_filename = f"{HOST_RESULT_DIR}/{mitigation}/stats/{stat_str}_{trace}.txt"
+            error_filename = f"{HOST_RESULT_DIR}/{mitigation}/errors/{stat_str}_{trace}.txt"
             config_filename = f"{RESULT_DIR}/{mitigation}/configs/{stat_str}_{trace}.yaml"
             cmd_count_filename = f"{RESULT_DIR}/{mitigation}/cmd_count/{stat_str}_{trace}.cmd.count"
             latency_dump_filename = f"{RESULT_DIR}/{mitigation}/mem_latency/{stat_str}_{trace}.memlat.dump"
@@ -177,27 +180,28 @@ def get_multicore_run_commands():
             config_file.close()
 
             sbatch_filename = f"{WORK_DIR}/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
-            sbatch_file = open(sbatch_filename, "w")
-            sbatch_file.write(f"{CMD_HEADER}\n{CMD} -f {config_filename}\n")
+            podman_sbatch_filename = f"/app/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
+            sbatch_file = open(podman_sbatch_filename, "w")
+            sbatch_file.write(f"{CMD_HEADER}\npodman run --rm -v $PWD:/app breakhammer_artifact {CMD} -f {config_filename}\n")
             sbatch_file.close()
 
             job_name = f"ramulator2"
             sb_cmd = f"{SBATCH_CMD} --chdir={WORK_DIR} --output={result_filename}"
             sb_cmd += f" --error={error_filename} --partition=cpu_part --job-name='{job_name}'"
-            sb_cmd += f"./docker-wrapper.sh docker run --rm -v $PWD:/app/ breakhammer_artifact {sbatch_filename}"
+            sb_cmd += f" {sbatch_filename}"
 
             run_commands.append(sb_cmd)
     return run_commands
 
-os.system(f"rm -r {WORK_DIR}/run_scripts")
-os.system(f"mkdir -p {WORK_DIR}/run_scripts")
+os.system(f"rm -r /app/run_scripts")
+os.system(f"mkdir -p /app/run_scripts")
 
 single_cmds = get_singlecore_run_commands()
-multi_cmds = get_multicore_run_commands()
+multi_cmds = [] # get_multicore_run_commands()
 
 with open("run.sh", "w") as f:
     f.write(f"{CMD_HEADER}\n")
     for cmd in single_cmds + multi_cmds:
         f.write(f"{cmd}\n")
-
+    
 os.system("chmod uog+x run.sh")
