@@ -30,7 +30,8 @@ HOST_RESULT_DIR = RESULT_DIR.replace("/app", WORK_DIR)
 SBATCH_CMD = "sbatch --cpus-per-task=1 --nodes=1 --ntasks=1"
 
 CMD_HEADER = "#! /bin/bash"
-CMD = f"/app/ramulator2"
+CMD = "/app/ramulator2"
+LOAD_CMD = f"podman load --quiet -i {WORK_DIR}/breakhammer_artifact.tar"
 
 BASE_CONFIG = None
 
@@ -114,7 +115,7 @@ def get_singlecore_run_commands():
             sbatch_filename = f"{WORK_DIR}/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
             podman_sbatch_filename = f"/app/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
             sbatch_file = open(podman_sbatch_filename, "w")
-            sbatch_file.write(f"{CMD_HEADER}\npodman run --rm -v $PWD:/app breakhammer_artifact ls")
+            sbatch_file.write(f"{CMD_HEADER}\n{LOAD_CMD}\npodman run --rm -v $PWD:/app breakhammer_artifact \"{CMD} -f {config_filename}\"\n")
             sbatch_file.close()
 
             job_name = f"ramulator2"
@@ -182,7 +183,7 @@ def get_multicore_run_commands():
             sbatch_filename = f"{WORK_DIR}/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
             podman_sbatch_filename = f"/app/run_scripts/{mitigation}_{stat_str}_{trace}.sh"
             sbatch_file = open(podman_sbatch_filename, "w")
-            sbatch_file.write(f"{CMD_HEADER}\npodman run --rm -v $PWD:/app breakhammer_artifact {CMD} -f {config_filename}\n")
+            sbatch_file.write(f"{CMD_HEADER}\n{LOAD_CMD}\npodman run --rm -v $PWD:/app breakhammer_artifact \"{CMD} -f {config_filename}\"\n")
             sbatch_file.close()
 
             job_name = f"ramulator2"
@@ -197,7 +198,7 @@ os.system(f"rm -r /app/run_scripts")
 os.system(f"mkdir -p /app/run_scripts")
 
 single_cmds = get_singlecore_run_commands()
-multi_cmds = [] # get_multicore_run_commands()
+multi_cmds = get_multicore_run_commands()
 
 with open("run.sh", "w") as f:
     f.write(f"{CMD_HEADER}\n")

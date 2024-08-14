@@ -20,6 +20,9 @@ run_personal.sh
 run_slurm.sh
 run.sh
 
+# Ignore intermediate container image (slurm copies this to compute nodes)
+breakhammer_artifact.tar
+
 # Ignore everything in ae_results/
 ae_results/*
 # Do not ignore directories within ae_results/
