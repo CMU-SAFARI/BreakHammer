@@ -25,13 +25,12 @@
 - g++ with c++20 capabilities (g++-10 or above recommended)
 - Python3 (3.10 or above recommended)
 - Docker (Optional)
-  - We have tested Docker 27.0.3 on Ubuntu 22.04.1
+  - We have tested Podman 4.5.1 on Ubuntu 22.04.1
  
 ### Installation steps:
 
 1. Clone the repository `git clone git@github.com:kirbyydoge/breakhammer.git`
-2. Install python3 libraries with `pip3 install -r requirements.txt`
-3. Build Ramulator2 and download traces with `./run_simple_test.sh`
+3. Install python dependencies, build Ramulator2, and download traces with `./run_simple_test.sh`
 
 ## Example Use
 
