@@ -8,7 +8,7 @@ from scripts.run_config import *
 
 argparser = argparse.ArgumentParser(
     prog="RunPersonal",
-    description="Run ramulator2 simulations on a personal computer"
+    description="Run ramulator2 (with Docker) simulations using Slurm "
 )
 
 argparser.add_argument("-wd", "--working_directory")
@@ -25,7 +25,7 @@ TRACE_COMBINATION_FILE = args.trace_combination
 TRACE_DIR = args.trace_directory
 RESULT_DIR = args.result_directory
 
-SBATCH_CMD = "sbatch --exclude=kratos10,kratos17,kratos18,kratos19 --cpus-per-task=1 --nodes=1 --ntasks=1"
+SBATCH_CMD = "sbatch --cpus-per-task=1 --nodes=1 --ntasks=1"
 
 CMD_HEADER = "#!/bin/bash"
 CMD = f"{WORK_DIR}/ramulator2"
