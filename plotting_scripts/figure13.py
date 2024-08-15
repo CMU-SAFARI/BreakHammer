@@ -37,14 +37,13 @@ def plot_figure13(csv_dir):
     df["pN_val"] = df["pN_val"] * NS_PER_CYCLE
 
     mitigations = list(set(df.mitigation.unique()) - set(["Dummy", "TWiCe-Ideal"])) + ["TWiCe"]
-    num_mechs = len(mitigations)
 
     fig = plt.figure(figsize=(6, 2.5))
     spec = fig.add_gridspec(2, 8)
 
     colors = sns.color_palette("pastel", 3)
     plot_id = 0
-    for mech in ["Hydra", "Graphene", "REGA", "RFM", "AQUA", "TWiCe", "PARA"]:
+    for mech in mitigations:
         plot_df = df[(df["configstr"].str.contains(mech)) | (df["mitigation"] == "Dummy")]
         if mech == "XDDDD":
             ax_row = None
@@ -70,7 +69,6 @@ def plot_figure13(csv_dir):
                     hue_order=hue_order, palette=colors, ax=ax, linewidth=2, errorbar=('ci', 0))
 
         lines = ax.get_lines()
-        legend_texts = ax.get_legend().get_texts()
 
         for line, label in zip(lines, ax.get_legend().get_texts()):
             if label.get_text() == "Baseline":
@@ -86,13 +84,16 @@ def plot_figure13(csv_dir):
         fill_colors = [colors[0], colors[1]]
         p_alpha = 0.15
 
-        for i in range(len(x)):
-            better = 'y1' if y1[i] < y2[i] else 'y2'
-            if better != current_better:
-                if start is not None:
-                    ax.axvspan(x[start], x[i], color=fill_colors[0] if current_better == 'y1' else fill_colors[1], alpha=p_alpha)
-                start = i
-            current_better = better
+        try:
+            for i in range(len(x)):
+                better = 'y1' if y1[i] < y2[i] else 'y2'
+                if better != current_better:
+                    if start is not None:
+                        ax.axvspan(x[start], x[i], color=fill_colors[0] if current_better == 'y1' else fill_colors[1], alpha=p_alpha)
+                    start = i
+                current_better = better
+        except:
+            pass
 
         if start is not None:
             ax.axvspan(x[start], x[-1], color=fill_colors[0] if current_better == 'y1' else fill_colors[1], alpha=p_alpha)
