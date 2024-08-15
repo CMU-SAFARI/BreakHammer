@@ -24,7 +24,7 @@
 - Git
 - g++ with c++20 capabilities (g++-10 or above recommended)
 - Python3 (3.10 or above recommended)
-- Docker (Optional)
+- Podman (Optional)
   - We have tested Podman 4.5.1 on Ubuntu 22.04.1
  
 ### Installation steps:
