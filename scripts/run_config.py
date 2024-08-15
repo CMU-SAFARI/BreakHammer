@@ -3,7 +3,11 @@ from .calc_rh_parameters import *
 
 
 MEM_HIST_PREC = 5
+
+# Number of instructions the slowest core must execute before the simulation ends
 NUM_EXPECTED_INSTS = 100_000_000
+
+# Number of cycles the simulation should run
 NUM_MAX_CYCLES = 3_000_000_000
 
 CONTROLLER = "BHDRAMController"
@@ -18,8 +22,13 @@ dynamic_thresh_list = []
 thresh_type_list = []
 cache_only_list = []
 
+# List of evaluated RowHammer mitigation mechanisms
 mitigation_list = ["AQUA", "Graphene", "Hydra", "PARA", "REGA", "RFM", "TWiCe-Ideal"]
+
+# List of evaluated RowHammer thresholds
 tRH_list = [4096, 2048, 1024, 512, 256, 128, 64]
+
+# BreakHammer parameters
 flat_thresh_list = [32]
 dynamic_thresh_list = [0.65]
 thresh_type_list = ["MEAN"]
