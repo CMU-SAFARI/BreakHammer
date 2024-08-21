@@ -1,7 +1,24 @@
 import itertools
 from .calc_rh_parameters import *
 
+SECONDS_IN_MINUTE = 60
 
+# Slurm username
+SLURM_USERNAME = "$USER" 
+
+# Maximum Slurm jobs
+MAX_SLURM_JOBS = 500 
+
+# Delay between submitting Slurm jobs (while job limit is not reached)
+SLURM_SUBMIT_DELAY = 0.1 
+
+# Delay between retrying Slurm job submission (when job limit is reached)
+SLURM_RETRY_DELAY = 1 * SECONDS_IN_MINUTE 
+
+# Number of threads used for the personal computer runs
+PERSONAL_RUN_THREADS = 4
+
+# Memory histogram precision
 MEM_HIST_PREC = 5
 
 # Number of instructions the slowest core must execute before the simulation ends

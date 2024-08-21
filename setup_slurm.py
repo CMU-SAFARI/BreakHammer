@@ -7,7 +7,7 @@ import pandas as pd
 from scripts.run_config import *
 
 argparser = argparse.ArgumentParser(
-    prog="RunPersonal",
+    prog="RunSlurm",
     description="Run ramulator2 simulations using Slurm"
 )
 
@@ -16,6 +16,7 @@ argparser.add_argument("-bc", "--base_config")
 argparser.add_argument("-tc", "--trace_combination")
 argparser.add_argument("-td", "--trace_directory")
 argparser.add_argument("-rd", "--result_directory")
+argparser.add_argument("-pn", "--partition_name")
 
 args = argparser.parse_args()
 
@@ -24,6 +25,7 @@ BASE_CONFIG_FILE = args.base_config
 TRACE_COMBINATION_FILE = args.trace_combination
 TRACE_DIR = args.trace_directory
 RESULT_DIR = args.result_directory
+PARTITION_NAME = args.partition_name
 
 SBATCH_CMD = "sbatch --cpus-per-task=1 --nodes=1 --ntasks=1"
 
@@ -116,7 +118,7 @@ def get_singlecore_run_commands():
 
             job_name = f"ramulator2"
             sb_cmd = f"{SBATCH_CMD} --chdir={WORK_DIR} --output={result_filename}"
-            sb_cmd += f" --error={error_filename} --partition=cpu_part --job-name='{job_name}'"
+            sb_cmd += f" --error={error_filename} --partition={PARTITION_NAME} --job-name='{job_name}'"
             sb_cmd += f" {sbatch_filename}"
 
             run_commands.append(sb_cmd)
@@ -183,7 +185,7 @@ def get_multicore_run_commands():
 
             job_name = f"ramulator2"
             sb_cmd = f"{SBATCH_CMD} --chdir={WORK_DIR} --output={result_filename}"
-            sb_cmd += f" --error={error_filename} --partition=cpu_part --job-name='{job_name}'"
+            sb_cmd += f" --error={error_filename} --partition={PARTITION_NAME} --job-name='{job_name}'"
             sb_cmd += f" {sbatch_filename}"
 
             run_commands.append(sb_cmd)

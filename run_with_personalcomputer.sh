@@ -9,7 +9,7 @@ python3 setup_personalcomputer.py \
     --result_directory "$PWD/ae_results/microattack"
 
 echo "[INFO] Starting Ramulator2 attacker simulations"
-sh "$PWD/run.sh" 
+python3 execute_run_script.py
 
 echo "[INFO] Generating Ramulator2 configurations and run scripts for benign workloads (This might take a while, e.g., >3 mins)"
 python3 setup_personalcomputer.py \
@@ -20,6 +20,6 @@ python3 setup_personalcomputer.py \
     --result_directory "$PWD/ae_results/microbenign"
 
 echo "[INFO] Starting Ramulator2 benign simulations"
-sh "$PWD/run.sh" 
+python3 execute_run_script.py
 
 echo "[INFO] You can track run status with the <check_run_status.sh> script"

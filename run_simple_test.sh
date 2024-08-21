@@ -11,7 +11,7 @@ if [ "$(ls -A cputraces/)" ]; then
 else
   echo "[INFO] cputraces/ directory is empty"
   echo "[INFO] Downloading the traces into ./cputraces"
-  python3 /app/download_traces.py
+  python3 ./download_traces.py
   echo "[INFO] Decompressing the traces into ./cputraces"
   tar -xvf cputraces.tar.gz --no-same-owner
 fi
