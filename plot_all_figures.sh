@@ -7,4 +7,4 @@ python3 plotting_scripts/plot_all.py \
     --trace_directory "$PWD/cputraces" \
     --result_directory "$PWD/ae_results"
 
-echo "[INFO] Generated figures to '$PWD/plots/'"
+echo "[INFO] Generated figures to '$PWD/_plots/'"

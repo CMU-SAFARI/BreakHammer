@@ -4,6 +4,7 @@ echo "[INFO] Installing Python dependencies"
 pip3 install -r requirements.txt
 
 echo "[INFO] Building Ramulator2"
+rm -rf ./build/
 sh "./build.sh"
 
 if [ "$(ls -A cputraces/)" ]; then
