@@ -28,7 +28,7 @@
   - We have tested Podman 4.5.1 on Ubuntu 22.04.1
  
 ### Installation steps:
-1. Clone the repository `git clone git@github.com:kirbyydoge/breakhammer.git`
+1. Clone the repository `git clone https://github.com/CMU-SAFARI/BreakHammer.git`
 2. Install python dependencies, build Ramulator2, and download traces with `./run_simple_test.sh`[^1]
 
 [^1]: To start (or stop) using Podman, the repository should be rebuilt using `./run_simple_test.sh` with (or without) `podman run`
