@@ -1,3 +1,6 @@
+## BreakHammer: Enhancing RowHammer Mitigations by Carefully Throttling Suspect Threads
+BreakHammer is a technique that reduces the performance overhead of RowHammer mitigation mechanisms by carefully reducing the number of performed RowHammer-preventive actions without compromising system robustness. Described in the MICRO 2024 paper: https://arxiv.org/abs/2404.13477.
+
 ## Repository File Structure 
 
 ```
